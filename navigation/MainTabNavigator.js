@@ -14,9 +14,6 @@ export default TabNavigator(
     Home: {
       screen: HomeScreen,
     },
-    FAQ: {
-      screen: LinksScreen,
-    },
   },
   {
     navigationOptions: ({ navigation }) => ({
@@ -30,7 +27,7 @@ export default TabNavigator(
                 ? `ios-albums${focused ? '' : '-outline'}`
                 : 'md-albums'
             break
-          case 'Links':
+          case 'FAQ':
             iconName =
               Platform.OS === 'ios'
                 ? `ios-link${focused ? '' : '-outline'}`
