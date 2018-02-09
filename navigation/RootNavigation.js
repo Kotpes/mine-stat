@@ -3,7 +3,7 @@ import React from 'react'
 import { StackNavigator } from 'react-navigation'
 
 import MainTabNavigator from './MainTabNavigator'
-import LinksScreen from '../screens/LinksScreen'
+import AddPoolScreen from '../screens/AddPoolScreen'
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync'
 
 const RootStackNavigator = StackNavigator(
@@ -12,9 +12,10 @@ const RootStackNavigator = StackNavigator(
       screen: MainTabNavigator,
     },
     AddPool: {
-      screen: LinksScreen,
+      screen: AddPoolScreen,
     },
   },
+
   {
     navigationOptions: () => ({
       headerTitleStyle: {
