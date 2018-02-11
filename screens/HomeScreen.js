@@ -1,22 +1,17 @@
 import React from 'react'
-import {
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Modal,
-} from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
-import { Button, Text } from 'native-base'
-import { Container, Content, Picker, Form, Item } from 'native-base'
-import { Row, Grid } from 'react-native-easy-grid'
+import {Platform, StyleSheet, View} from 'react-native'
+import {Ionicons} from '@expo/vector-icons'
+import {Button, Text} from 'native-base'
+import {Container, Content, Picker, Form, Item} from 'native-base'
+import {Row, Grid} from 'react-native-easy-grid'
+import store from 'react-native-simple-store'
+
 import Colors from '../constants/Colors'
 import Fonts from '../constants/Fonts'
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     title: 'Pools',
-    header: null,
   }
 
   constructor(props) {
@@ -24,7 +19,12 @@ export default class HomeScreen extends React.Component {
     this.state = {
       selected2: undefined,
       modalVisible: false,
+      availablePools: undefined,
     }
+  }
+
+  componentWillMount() {
+    this._getPools()
   }
 
   onValueChange2(value) {
@@ -33,69 +33,51 @@ export default class HomeScreen extends React.Component {
     })
   }
 
+  async _getPools() {
+    try {
+      const pools = await store.get('pools')
+      this.setState({availablePools: pools})
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   openModal() {
-    this.setState({ modalVisible: true })
+    this.setState({modalVisible: true})
   }
 
   closeModal() {
-    this.setState({ modalVisible: false })
+    this.setState({modalVisible: false})
   }
 
   render() {
+    const {availablePools} = this.state
+
     return (
       <Container>
         <Content contentContainerStyle={styles.container}>
           <Grid style={styles.grid}>
             <Row style={styles.row}>
+              <Text>{`Found pool: ${availablePools &&
+                availablePools[0].wallet}`}</Text>
               <Text style={styles.helpText}>
                 No pools found, please add one first
               </Text>
-              <Button block iconLeft onPress={() => this.goToScreen('AddPool')}>
+              <Button
+                block
+                iconLeft
+                onPress={() => this._goToScreen('AddPool')}
+              >
                 <Ionicons name="md-add" color={'white'} size={20} />
                 <Text style={styles.buttonText}>Add pool</Text>
               </Button>
-
-              <Modal
-                visible={this.state.modalVisible}
-                animationType={'slide'}
-                onRequestClose={() => this.closeModal()}
-                style={styles.modal}
-              >
-                <Content contentContainerStyle={styles.modalContainer}>
-                  <View style={styles.innerContainer}>
-                    <Text style={styles.modalTitle}>Add pool</Text>
-                    <Text style={styles.helpText}>
-                      Please, select pool from the list below
-                    </Text>
-                    <Content>
-                      <Form>
-                        <Picker
-                          mode="dropdown"
-                          placeholder="Select One"
-                          selectedValue={this.state.selected2}
-                          onValueChange={this.onValueChange2.bind(this)}
-                        >
-                          <Item label="Wallet" value="key0" />
-                          <Item label="ATM Card" value="key1" />
-                          <Item label="Debit Card" value="key2" />
-                          <Item label="Credit Card" value="key3" />
-                          <Item label="Net Banking" value="key4" />
-                        </Picker>
-                      </Form>
-                    </Content>
-                    <Button iconLeft onPress={() => this.closeModal()}>
-                      <Text style={styles.buttonText}>Add pool</Text>
-                    </Button>
-                  </View>
-                </Content>
-              </Modal>
             </Row>
           </Grid>
         </Content>
       </Container>
     )
   }
-  goToScreen = screen => {
+  _goToScreen = screen => {
     this.props.navigation.navigate(screen)
   }
 }

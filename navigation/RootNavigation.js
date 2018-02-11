@@ -1,6 +1,6 @@
-import { Notifications } from 'expo'
+import {Notifications} from 'expo'
 import React from 'react'
-import { StackNavigator } from 'react-navigation'
+import {StackNavigator} from 'react-navigation'
 
 import MainTabNavigator from './MainTabNavigator'
 import AddPoolScreen from '../screens/AddPoolScreen'
@@ -15,7 +15,9 @@ const RootStackNavigator = StackNavigator(
       screen: AddPoolScreen,
     },
   },
-
+  // {
+  //   initialRouteName: 'AddPool',
+  // },
   {
     navigationOptions: () => ({
       headerTitleStyle: {
@@ -51,7 +53,7 @@ export default class RootNavigator extends React.Component {
     )
   }
 
-  _handleNotification = ({ origin, data }) => {
+  _handleNotification = ({origin, data}) => {
     console.log(
       `Push notification ${origin} with data: ${JSON.stringify(data)}`,
     )
