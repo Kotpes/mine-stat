@@ -19,11 +19,17 @@ import store from 'react-native-simple-store'
 import Colors from '../constants/Colors'
 import Fonts from '../constants/Fonts'
 import Pools from '../static/pools.json'
+import observablePoolStore from '../store/poolStore'
+import {observer} from 'mobx-react/native'
 
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
     title: 'Add pool',
   }
+  static defaultProps = {
+    store: observablePoolStore,
+  }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -35,16 +41,18 @@ export default class LinksScreen extends React.Component {
       modalVisible: false,
       walletAddress: 'Wallet address',
       poolsData: Pools.items || [],
+      customLabel: '',
     }
+  }
+
+  componentDidMount() {
+    const {store: {pools}} = this.props
+    console.log(pools)
   }
 
   async componentWillMount() {
     const {status} = await Permissions.askAsync(Permissions.CAMERA)
     this.setState({hasCameraPermission: status === 'granted'})
-  }
-
-  componentDidMount() {
-    this._getListOfPools()
   }
 
   openModal() {
@@ -69,8 +77,9 @@ export default class LinksScreen extends React.Component {
       walletAddress,
       hasCameraPermission,
       selectedPool,
+      customLabel,
     } = this.state
-    console.log(walletAddress)
+
     if (!selectedPool || selectedPool === 0) {
       Alert.alert('Pool is not selected', `Select pool first`, [{text: 'OK'}])
     } else if (walletAddress === 'Wallet address') {
@@ -79,10 +88,16 @@ export default class LinksScreen extends React.Component {
         `Add wallet address before continue`,
         [{text: 'OK'}],
       )
+    } else if (customLabel === '') {
+      Alert.alert(
+        'Custom label is missing',
+        `Add custom label for this pool before continue`,
+        [{text: 'OK'}],
+      )
     } else {
       Alert.alert(
-        'Pool info',
-        `Selected pool: ${selectedPoolLabel} Wallet address: ${walletAddress}`,
+        `${customLabel} | ${selectedPoolLabel}`,
+        `Wallet address: ${walletAddress}`,
         [
           {
             text: 'Cancel',
@@ -95,27 +110,19 @@ export default class LinksScreen extends React.Component {
     }
   }
 
-  async _handlePoolSubmit() {
-    const {selectedPool, walletAddress} = this.state
+  _handlePoolSubmit() {
+    const {walletAddress, customLabel, selectedPoolLabel} = this.state
+    const {store} = this.props
 
-    const existingPool = await store.get('pools')
-
-    const PoolInfo = {
-      key: selectedPool,
+    const pool = {
+      name: selectedPoolLabel,
+      customLabel,
       wallet: walletAddress,
     }
-    try {
-      await store.push('pools', PoolInfo)
-      this.props.navigation.navigate('Main')
-    } catch (e) {
-      console.log(e)
-    }
-  }
 
-  async _getListOfPools() {
     try {
-      const pools = await store.get('pools')
-      console.log(pools)
+      store.addPool(pool)
+      this.props.navigation.navigate('Main')
     } catch (e) {
       console.log(e)
     }
@@ -128,11 +135,11 @@ export default class LinksScreen extends React.Component {
 
   _onPickerValueChange(itemValue) {
     const {poolsData} = this.state
-    console.log(poolsData[itemValue].label)
+    const selectedPoolLabel = poolsData.find(p => p.key === itemValue).label
+
     this.setState({
       selectedPool: itemValue,
-      selectedPoolLabel: poolsData[itemValue].label,
-      visibleWalletField: true,
+      selectedPoolLabel,
     })
   }
 
@@ -177,6 +184,13 @@ export default class LinksScreen extends React.Component {
                     name="camera"
                     style={styles.cameraIcon}
                     onPress={() => this.openModal()}
+                  />
+                </Item>
+                <Item style={styles.input}>
+                  <Input
+                    style={styles.walletInput}
+                    placeholder="Custom label"
+                    onChangeText={label => this.setState({customLabel: label})}
                   />
                 </Item>
                 <Button block onPress={() => this._submitAlert()}>

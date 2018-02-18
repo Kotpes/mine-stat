@@ -5,6 +5,7 @@ import {StackNavigator} from 'react-navigation'
 import MainTabNavigator from './MainTabNavigator'
 import AddPoolScreen from '../screens/AddPoolScreen'
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync'
+import observablePoolStore from '../store/poolStore'
 
 const RootStackNavigator = StackNavigator(
   {
@@ -37,7 +38,7 @@ export default class RootNavigator extends React.Component {
   }
 
   render() {
-    return <RootStackNavigator />
+    return <RootStackNavigator store={observablePoolStore} />
   }
 
   _registerForPushNotifications() {

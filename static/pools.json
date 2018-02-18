@@ -1,23 +1,23 @@
 {
   "items": [
     {
-      "key": 0,
+      "key": "select-pool",
       "label": "Select pool"
     },
     {
-      "key": 1,
+      "key": "eth-ethermine",
       "label": "(ETH) Ethermine.org"
     },
     {
-      "key": 2,
+      "key": "eth-ethpool",
       "label": "(ETH) Ethpool.org"
     },
     {
-      "key": 3,
+      "key": "etc-ethermine",
       "label": "(ETC) Ethermine.org"
     },
     {
-      "key": 4,
+      "key": "zec-flypool",
       "label": "(ZEC) Flypool Zcash"
     }
   ]

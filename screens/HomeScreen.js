@@ -5,13 +5,20 @@ import {Button, Text} from 'native-base'
 import {Container, Content, Picker, Form, Item} from 'native-base'
 import {Row, Grid} from 'react-native-easy-grid'
 import store from 'react-native-simple-store'
+import observablePoolStore from '../store/poolStore'
+import {observer} from 'mobx-react/native'
 
 import Colors from '../constants/Colors'
 import Fonts from '../constants/Fonts'
 
+@observer
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     title: 'Pools',
+  }
+
+  static defaultProps = {
+    store: observablePoolStore,
   }
 
   constructor(props) {
@@ -33,9 +40,10 @@ export default class HomeScreen extends React.Component {
     })
   }
 
-  async _getPools() {
+  _getPools() {
+    const {store} = this.props
     try {
-      const pools = await store.get('pools')
+      const pools = store.pools
       this.setState({availablePools: pools})
     } catch (e) {
       console.log(e)
@@ -58,11 +66,29 @@ export default class HomeScreen extends React.Component {
         <Content contentContainerStyle={styles.container}>
           <Grid style={styles.grid}>
             <Row style={styles.row}>
-              <Text>{`Found pool: ${availablePools &&
-                availablePools[0].wallet}`}</Text>
-              <Text style={styles.helpText}>
-                No pools found, please add one first
-              </Text>
+              {availablePools.length > 0 ? (
+                availablePools.map(pool => {
+                  return (
+                    <View key={pool.key} style={styles.poolCard}>
+                      <Text>
+                        {pool.wallet}{' '}
+                        <Ionicons
+                          onPress={() => {
+                            store.delete('pools')
+                          }}
+                          name="md-trash"
+                          size={20}
+                        />
+                      </Text>
+                    </View>
+                  )
+                })
+              ) : (
+                <Text style={styles.helpText}>
+                  No pools found, please add one first
+                </Text>
+              )}
+
               <Button
                 block
                 iconLeft

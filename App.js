@@ -44,6 +44,8 @@ export default class App extends React.Component {
         'rubik-light': require('./assets/fonts/Rubik-Light.ttf'),
         'rubik-black': require('./assets/fonts/Rubik-Black.ttf'),
         'rubik-medium': require('./assets/fonts/Rubik-Medium.ttf'),
+        'Roboto': require('native-base/Fonts/Roboto.ttf'),
+        'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
       }),
     ])
   }
