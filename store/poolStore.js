@@ -1,9 +1,11 @@
 import {observable} from 'mobx'
+import {AsyncStorage} from 'react-native'
+import { create, persist } from 'mobx-persist'
 
 let index = 0
 
 class ObservablePoolStore {
-  @observable pools = []
+  @persist('list') @observable pools = []
 
   removePool(pool) {
     this.pools = this.pools.filter(p => {
@@ -22,5 +24,14 @@ class ObservablePoolStore {
   }
 }
 
+const hydrate = create({
+    storage: AsyncStorage,
+    jsonify: true,
+})
+
 const observablePoolStore = new ObservablePoolStore()
 export default observablePoolStore
+
+hydrate('pools', observablePoolStore)
+    // post hydration
+    .then(() => console.log('some hydrated'))
