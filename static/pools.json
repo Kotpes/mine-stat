@@ -6,19 +6,23 @@
     },
     {
       "key": "eth-ethermine",
-      "label": "(ETH) Ethermine.org"
+      "label": "(ETH) Ethermine.org",
+      "apiEndpoint": "https://api.ethermine.org"
     },
     {
       "key": "eth-ethpool",
-      "label": "(ETH) Ethpool.org"
+      "label": "(ETH) Ethpool.org",
+      "apiEndpoint": "https://api.ethpool.org"
     },
     {
       "key": "etc-ethermine",
-      "label": "(ETC) Ethermine.org"
+      "label": "(ETC) Ethermine.org",
+      "apiEndpoint": "https://api-etc.ethermine.org"
     },
     {
       "key": "zec-flypool",
-      "label": "(ZEC) Flypool Zcash"
+      "label": "(ZEC) Flypool Zcash",
+      "apiEndpoint": "https://api-zcash.flypool.org"
     }
   ]
 }

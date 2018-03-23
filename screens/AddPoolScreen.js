@@ -120,13 +120,15 @@ export default class LinksScreen extends React.Component {
   }
 
   _handlePoolSubmit() {
-    const { walletAddress, customLabel, selectedPoolLabel } = this.state;
+    const { walletAddress, customLabel, selectedPoolLabel, poolApiEndpoint } = this.state;
     const { store } = this.props;
+
 
     const pool = {
       name: selectedPoolLabel,
       customLabel,
-      wallet: walletAddress
+      wallet: walletAddress,
+      poolApiEndpoint,
     };
 
     try {
@@ -144,11 +146,14 @@ export default class LinksScreen extends React.Component {
 
   _onPickerValueChange(itemValue) {
     const { poolsData } = this.state;
+
     const selectedPoolLabel = poolsData.find(p => p.key === itemValue).label;
+    const poolApiEndpoint = poolsData.find(p => p.key === itemValue).apiEndpoint;
 
     this.setState({
       selectedPool: itemValue,
-      selectedPoolLabel
+      selectedPoolLabel,
+      poolApiEndpoint
     });
   }
 

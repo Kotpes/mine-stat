@@ -22,14 +22,11 @@ export default class HomeScreen extends React.Component {
     store: observablePoolStore
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      selected2: undefined,
-      modalVisible: false,
-      availablePools: []
-    };
-  }
+  state = {
+    selected2: undefined,
+    modalVisible: false,
+    availablePools: []
+  };
 
   componentDidMount() {
     this._getPools();
@@ -80,7 +77,7 @@ export default class HomeScreen extends React.Component {
         >
           {availablePools.length > 0 ? (
             availablePools.map(pool => (
-              <PoolCard data={pool} removePool={() => this._removePool(pool)} />
+              <PoolCard  key={pool.index} data={pool} removePool={() => this._removePool(pool)} />
             ))
           ) : (
             <Text style={styles.helpText}>
@@ -88,7 +85,12 @@ export default class HomeScreen extends React.Component {
             </Text>
           )}
 
-          <Button block iconLeft onPress={() => this._goToScreen("AddPool")}>
+          <Button
+            block
+            iconLeft
+            onPress={() => this._goToScreen("AddPool")}
+            style={{ marginTop: availablePools.length > 0 ? 0 : 20 }}
+          >
             <Ionicons name="md-add" color={"white"} size={20} />
             <Text style={styles.buttonText}>Add pool</Text>
           </Button>
@@ -107,15 +109,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   containerNoPools: {
+    paddingLeft: 20,
+    paddingRight: 20,
     flex: 1,
     //paddingTop: 50,
     flexDirection: "column",
-    justifyContent: "center"
+    justifyContent: "center",
+    borderRadius: 10,
   },
-  containerPools: {},
+  containerPools: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 20,
+  },
   helpText: {
     color: Colors.noticeText,
-    marginBottom: 20,
     textAlign: "center"
   },
   modalContainer: {
