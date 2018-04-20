@@ -63,7 +63,6 @@ export default class HomeScreen extends React.Component {
 
   render() {
     const { availablePools } = this.state;
-    console.log(availablePools);
 
     return (
       <Container style={styles.container}>
@@ -77,7 +76,7 @@ export default class HomeScreen extends React.Component {
         >
           {availablePools.length > 0 ? (
             availablePools.map(pool => (
-              <PoolCard  key={pool.index} data={pool} removePool={() => this._removePool(pool)} />
+              <PoolCard  key={pool.index} data={pool} removePool={() => this._removePool(pool)} onPress={() => this.props.navigation.navigate("poolStatDetails", pool: pool)} />
             ))
           ) : (
             <Text style={styles.helpText}>
@@ -89,7 +88,7 @@ export default class HomeScreen extends React.Component {
             block
             iconLeft
             onPress={() => this._goToScreen("AddPool")}
-            style={{ marginTop: availablePools.length > 0 ? 0 : 20 }}
+            style={{ marginTop: availablePools.length > 0 ? 0 : 20, marginBottom: 20 }}
           >
             <Ionicons name="md-add" color={"white"} size={20} />
             <Text style={styles.buttonText}>Add pool</Text>
@@ -98,8 +97,8 @@ export default class HomeScreen extends React.Component {
       </Container>
     );
   }
-  _goToScreen = screen => {
-    this.props.navigation.navigate(screen);
+  _goToScreen = (screen) => {    
+    this.props.navigation.navigate(screen);  
   };
 }
 

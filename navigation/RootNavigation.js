@@ -3,6 +3,7 @@ import React from 'react'
 import {StackNavigator} from 'react-navigation'
 
 import MainTabNavigator from './MainTabNavigator'
+import PoolStatDetails from '../screens/PoolStatDetails'
 import AddPoolScreen from '../screens/AddPoolScreen'
 import observablePoolStore from '../store/poolStore'
 
@@ -14,6 +15,9 @@ const RootStackNavigator = StackNavigator(
     AddPool: {
       screen: AddPoolScreen,
     },
+    poolStatDetails: {
+      screen: PoolStatDetails,
+    }
   },
   // {
   //   initialRouteName: 'AddPool',

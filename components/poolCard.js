@@ -1,7 +1,7 @@
 //@flow
 
 import {Ionicons} from "@expo/vector-icons";
-import {View, StyleSheet, Alert} from "react-native";
+import {View, StyleSheet, Alert, TouchableOpacity} from "react-native";
 import {
   Container,
   Button,
@@ -20,6 +20,7 @@ import { getHashrate, getBallance } from "../utils/dataUtils";
 type Props = {
   removePool: Function,
   data: Object,
+  onPress: Function,
 }
 
 type State = {
@@ -72,6 +73,8 @@ class poolCard extends React.Component<Props, State> {
 
   render() {
     const {data, minerCurrentStats} = this.state
+    const {onPress} = this.props
+    
     
     if (!minerCurrentStats) {
       return null
@@ -80,9 +83,9 @@ class poolCard extends React.Component<Props, State> {
     const activeWorkers = minerCurrentStats.activeWorkers >= 0 ? minerCurrentStats.activeWorkers : 0
 
     return (
-      <Container style={styles.container}>
+      <TouchableOpacity style={styles.container} onPress={onPress}>
         <View style={styles.card}>
-          <CardItem>
+          <CardItem onPress={() => Alert.alert('Touched')}>
             <Body>
               <Text style={styles.label}>{data.customLabel}</Text>
               <Text style={styles.pool}>{data.poolName}</Text>
@@ -118,7 +121,7 @@ class poolCard extends React.Component<Props, State> {
             </Button>
           </CardItem> */}
         </View>
-      </Container>
+      </TouchableOpacity>
     )
   }
 }
@@ -135,11 +138,12 @@ const styles = StyleSheet.create({
     borderColor: Colors.borderLightGray,
     borderWidth: 1,
     justifyContent: "flex-start",
-    shadowRadius: 2,
-    shadowOpacity: 0.1,
+    shadowRadius: 0,
+    shadowOpacity: 0.6,
+    shadowColor: "salmon",
     shadowOffset: {
       width: 0,
-      height: 3
+      height: 6
     }
   },
   label: {
@@ -154,7 +158,7 @@ const styles = StyleSheet.create({
   address: {
     fontFamily: "rubik-light",
     letterSpacing: 1,
-    fontSize: 11,
+    fontSize: 10,
   },
   poolStat: {
     flexDirection: "row",
@@ -173,7 +177,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   stats: {
-
     alignItems: "center",
   },
   stat: {
@@ -182,6 +185,7 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   value: {
-    fontSize: Fonts.heading4,
+    fontSize: 15,
+    fontFamily: "rubik-medium",
   }
 });

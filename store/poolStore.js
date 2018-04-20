@@ -5,8 +5,7 @@ import { generateId } from "../utils/dataUtils";
 
 class ObservablePoolStore {
   @persist("list")
-  @observable 
-  pools = [];
+  @observable pools = [];
 
   removePool(pool) {
     this.pools = this.pools.filter(p => {
