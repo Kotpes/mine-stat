@@ -49,7 +49,8 @@ export default class LinksScreen extends React.Component {
       modalVisible: false,
       walletAddress: "Wallet address",
       poolsData: Pools.items || [],
-      customLabel: ""
+      customLabel: "",
+      cryptoCode: "",
     };
   }
 
@@ -120,15 +121,15 @@ export default class LinksScreen extends React.Component {
   }
 
   _handlePoolSubmit() {
-    const { walletAddress, customLabel, selectedPoolLabel, poolApiEndpoint } = this.state;
+    const { walletAddress, customLabel, selectedPoolLabel, poolApiEndpoint, cryptoCode } = this.state;
     const { store } = this.props;
-
 
     const pool = {
       name: selectedPoolLabel,
       customLabel,
       wallet: walletAddress,
       poolApiEndpoint,
+      cryptoCode,
     };
 
     try {
@@ -149,11 +150,13 @@ export default class LinksScreen extends React.Component {
 
     const selectedPoolLabel = poolsData.find(p => p.key === itemValue).label;
     const poolApiEndpoint = poolsData.find(p => p.key === itemValue).apiEndpoint;
+    const cryptoCode = poolsData.find(p => p.key === itemValue).cryptoCode;    
 
     this.setState({
       selectedPool: itemValue,
       selectedPoolLabel,
-      poolApiEndpoint
+      poolApiEndpoint,
+      cryptoCode,
     });
   }
 

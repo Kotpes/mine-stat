@@ -7,22 +7,26 @@
     {
       "key": "eth-ethermine",
       "label": "(ETH) Ethermine.org",
-      "apiEndpoint": "https://api.ethermine.org"
+      "apiEndpoint": "https://api.ethermine.org",
+      "cryptoCode": "ETH"
     },
     {
       "key": "eth-ethpool",
       "label": "(ETH) Ethpool.org",
-      "apiEndpoint": "https://api.ethpool.org"
+      "apiEndpoint": "https://api.ethpool.org",
+      "cryptoCode": "ETH"
     },
     {
       "key": "etc-ethermine",
       "label": "(ETC) Ethermine.org",
-      "apiEndpoint": "https://api-etc.ethermine.org"
+      "apiEndpoint": "https://api-etc.ethermine.org",
+      "cryptoCode": "ETC"
     },
     {
       "key": "zec-flypool",
       "label": "(ZEC) Flypool Zcash",
-      "apiEndpoint": "https://api-zcash.flypool.org"
+      "apiEndpoint": "https://api-zcash.flypool.org",
+      "cryptoCode": "ZEC"
     }
   ]
 }

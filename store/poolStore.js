@@ -19,6 +19,7 @@ class ObservablePoolStore {
       customLabel: pool.customLabel,
       wallet: pool.wallet,
       apiEndpoint: pool.poolApiEndpoint,
+      cryptoCode: pool.cryptoCode,
       index: generateId()
     });
   }

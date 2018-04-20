@@ -29,6 +29,7 @@ type State = {
     apiEndpoint: string,
     poolName: string,
     customLabel: string,
+    cryptoCode: string,
   },
   minerCurrentStats?: {
     activeWorkers: number,
@@ -75,7 +76,6 @@ class poolCard extends React.Component<Props, State> {
     const {data, minerCurrentStats} = this.state
     const {onPress} = this.props
     
-    
     if (!minerCurrentStats) {
       return null
     }
@@ -105,7 +105,7 @@ class poolCard extends React.Component<Props, State> {
             </View>
             <View style={styles.stats}>
               <Text style={styles.stat}>Unpaid ballance</Text>
-              <Text style={styles.value}>{getBallance(minerCurrentStats.unpaid)}</Text>
+              <Text style={styles.value}>{getBallance(minerCurrentStats.unpaid)} {data.cryptoCode}</Text>
             </View>
           </CardItem>
           <View style={styles.cardActions}>
