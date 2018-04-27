@@ -73,7 +73,7 @@ export default class LinksScreen extends React.Component {
 
   _toggleOpacity() {
     const { visiblePicker } = this.state;
-    this.setState({ visiblePicker: visiblePicker ? false : true });
+    this.setState({ visiblePicker: !visiblePicker });
     if (!visiblePicker) {
       Keyboard.dismiss();
     }
@@ -192,7 +192,7 @@ export default class LinksScreen extends React.Component {
                   <Input
                     style={styles.walletInput}
                     placeholder={walletAddress}
-                    onFocus={() => this._toggleOpacity()}
+                    onFocus={() => visiblePicker && this._toggleOpacity()}
                     onChangeText={walletAddress =>
                       this.setState({ walletAddress })
                     }
@@ -220,6 +220,7 @@ export default class LinksScreen extends React.Component {
             {visiblePicker && (
               <SafeAreaView>
                 <Picker
+                  mode="dropdown"
                   selectedValue={selectedPool}
                   onValueChange={itemValue =>
                     this._onPickerValueChange(itemValue)

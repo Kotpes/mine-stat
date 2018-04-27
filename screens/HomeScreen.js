@@ -1,9 +1,11 @@
+//@flow
+
 import React from "react";
-import { Platform, StyleSheet, View, ScrollView } from "react-native";
+import { Platform, StyleSheet, View, ScrollView, RefreshControl } from "react-native";
 import { observer } from "mobx-react/native";
 import { Ionicons } from "@expo/vector-icons";
 import { Button, Text } from "native-base";
-import { Container, Content, Picker, Form, Item } from "native-base";
+import { Container, Content, Picker, Form, Item, Spinner } from "native-base";
 import { Row, Grid } from "react-native-easy-grid";
 import store from "react-native-simple-store";
 import observablePoolStore from "../store/poolStore";
@@ -11,6 +13,8 @@ import PoolCard from "../components/poolCard";
 
 import Colors from "../constants/Colors";
 import Fonts from "../constants/Fonts";
+
+const colors = ["#77c7c8", "#fa8072", "#C5C1DE", "#ABBFA3", "#DCC468", "#C34441", "#74B9E8"]
 
 @observer
 export default class HomeScreen extends React.Component {
@@ -23,7 +27,8 @@ export default class HomeScreen extends React.Component {
   };
 
   state = {
-    selected2: undefined,
+    loadingPools: true,
+    refreshing: false,
     modalVisible: false,
     availablePools: []
   };
@@ -32,24 +37,27 @@ export default class HomeScreen extends React.Component {
     this._getPools();
   }
 
-  onValueChange2(value) {
-    this.setState({
-      selected2: value
-    });
-  }
-
   _getPools() {
     const { store } = this.props;
     try {
       const pools = store.pools;
-      this.setState({ availablePools: pools });
+      this.setState({ 
+        availablePools: pools,
+        loadingPools: false,
+      });
     } catch (e) {
+      this.setState({ loadingPools: false });
       console.log(e);
     }
   }
+
   _removePool(pool) {
     const { store } = this.props;
     store.removePool(pool);
+    this._getPools();
+  }
+
+  _onRefresh() {
     this._getPools();
   }
 
@@ -62,12 +70,18 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
-    const { availablePools } = this.state;
+    const { availablePools, refreshing, loadingPools } = this.state;
 
-    return (
+    return !loadingPools ? (
       <Container style={styles.container}>
         <ScrollView
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }
           contentContainerStyle={
             availablePools.length === 0
               ? styles.containerNoPools
@@ -75,8 +89,8 @@ export default class HomeScreen extends React.Component {
           }
         >
           {availablePools.length > 0 ? (
-            availablePools.map(pool => (
-              <PoolCard  key={pool.index} data={pool} removePool={() => this._removePool(pool)} onPress={() => this.props.navigation.navigate("poolStatDetails", pool: pool)} />
+            availablePools.map((pool, i) => (
+              <PoolCard  key={pool.index} data={pool} shadowColor={colors[Math.floor(Math.random()*colors.length)]} removePool={() => this._removePool(pool)} onPress={() => this.props.navigation.navigate("poolStatDetails", pool: pool)} />
             ))
           ) : (
             <Text style={styles.helpText}>
@@ -95,7 +109,7 @@ export default class HomeScreen extends React.Component {
           </Button>
         </ScrollView>
       </Container>
-    );
+    ):(<Spinner color="gray" />)
   }
   _goToScreen = (screen) => {    
     this.props.navigation.navigate(screen);  

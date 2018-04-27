@@ -14,6 +14,9 @@ export default TabNavigator(
     Home: {
       screen: HomeScreen,
     },
+    Settings: {
+      screen: SettingsScreen,
+    },
   },
   {
     navigationOptions: ({navigation}) => ({
@@ -27,17 +30,11 @@ export default TabNavigator(
                 ? `ios-albums${focused ? '' : '-outline'}`
                 : 'md-albums'
             break
-          case 'FAQ':
-            iconName =
-              Platform.OS === 'ios'
-                ? `ios-link${focused ? '' : '-outline'}`
-                : 'md-link'
-            break
           case 'Settings':
             iconName =
               Platform.OS === 'ios'
-                ? `ios-options${focused ? '' : '-outline'}`
-                : 'md-options'
+                ? `ios-cog`
+                : 'md-cog'
         }
         return (
           <Ionicons

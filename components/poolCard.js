@@ -21,6 +21,7 @@ type Props = {
   removePool: Function,
   data: Object,
   onPress: Function,
+  shadowColor: string,
 }
 
 type State = {
@@ -74,17 +75,21 @@ class poolCard extends React.Component<Props, State> {
 
   render() {
     const {data, minerCurrentStats} = this.state
-    const {onPress} = this.props
+    const {onPress, shadowColor} = this.props
+   
     
     if (!minerCurrentStats) {
       return null
     }
 
     const activeWorkers = minerCurrentStats.activeWorkers >= 0 ? minerCurrentStats.activeWorkers : 0
+    const updaidBallance = minerCurrentStats ? minerCurrentStats.unpaid : 0
 
+    console.log(minerCurrentStats);
+    
     return (
       <TouchableOpacity style={styles.container} onPress={onPress}>
-        <View style={styles.card}>
+        <View style={[styles.card, {shadowColor}]}>
           <CardItem onPress={() => Alert.alert('Touched')}>
             <Body>
               <Text style={styles.label}>{data.customLabel}</Text>
@@ -105,7 +110,7 @@ class poolCard extends React.Component<Props, State> {
             </View>
             <View style={styles.stats}>
               <Text style={styles.stat}>Unpaid ballance</Text>
-              <Text style={styles.value}>{getBallance(minerCurrentStats.unpaid)} {data.cryptoCode}</Text>
+              <Text style={styles.value}>{getBallance(updaidBallance, data.cryptoCode)} {data.cryptoCode}</Text>
             </View>
           </CardItem>
           <View style={styles.cardActions}>
@@ -113,13 +118,6 @@ class poolCard extends React.Component<Props, State> {
               <Ionicons name="ios-trash-outline" color={"black"} size={24}/>
             </Button>  
           </View>
-          {/* <CardItem>
-            
-            <Button block iconLeft onPress={() => removePool(data)}>
-              <Ionicons name="ios-trash" color={"white"} size={20}/>
-              <Text style={styles.buttonText}>Remove</Text>
-            </Button>
-          </CardItem> */}
         </View>
       </TouchableOpacity>
     )
@@ -140,7 +138,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     shadowRadius: 0,
     shadowOpacity: 0.6,
-    shadowColor: "salmon",
     shadowOffset: {
       width: 0,
       height: 6
@@ -148,17 +145,20 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: "rubik-medium",
-    fontSize: Fonts.heading2
+    fontSize: Fonts.heading2,
+    color: Colors.textColor,
   },
   pool: {
     fontFamily: "rubik-regular",
     fontSize: Fonts.heading3,
-    marginBottom: 5
+    marginBottom: 5,
+    color: Colors.textColor,
   },
   address: {
     fontFamily: "rubik-light",
     letterSpacing: 1,
     fontSize: 10,
+    color: Colors.textColor,
   },
   poolStat: {
     flexDirection: "row",
@@ -187,5 +187,6 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 15,
     fontFamily: "rubik-medium",
+    color: Colors.textColor,
   }
 });

@@ -5,6 +5,7 @@ import {StackNavigator} from 'react-navigation'
 import MainTabNavigator from './MainTabNavigator'
 import PoolStatDetails from '../screens/PoolStatDetails'
 import AddPoolScreen from '../screens/AddPoolScreen'
+import SettingsScreen from '../screens/SettingsScreen'
 import observablePoolStore from '../store/poolStore'
 
 const RootStackNavigator = StackNavigator(
@@ -17,6 +18,9 @@ const RootStackNavigator = StackNavigator(
     },
     poolStatDetails: {
       screen: PoolStatDetails,
+    },
+    Settings: {
+      screen: SettingsScreen,
     }
   },
   // {

@@ -17,7 +17,7 @@ export async function getMiner(id, apiEndpoint) {
 
 export async function getMinerPayouts(id, apiEndpoint) {
   try {
-    const response = await axios.get(`${apiEndpoint}/miner/${id}/payouts`);
+    const response = await axios.get(`${apiEndpoint}/miner/${id}/payouts`);    
     return response.data
   } catch (error) {
     console.error(error);

@@ -27,8 +27,13 @@ export const getHashrate = (rawRate: number): string => {
  * Normalizes base units of ballance
  * @param {number} baseUnits 
  */
-export const getBallance = (baseUnits: number): string => {
-  const ballance = baseUnits ? (baseUnits/10)/100000000000000000 : 0
+export const getBallance = (baseUnits: number, curCode: ?string = ""): string => {
+  let ballance
+  if (curCode && curCode === "ZEC") {
+    ballance = baseUnits ? (baseUnits)/100000000 : 0
+  } else {
+    ballance = baseUnits ? (baseUnits/10)/100000000000000000 : 0
+  }
   const convert =  Number.parseFloat(ballance.toString()).toPrecision(4)
   
   return convert
@@ -43,6 +48,6 @@ export const generateId = ():string => {
 
   for (var i = 0; i < 5; i++)
     id += possible.charAt(Math.floor(Math.random() * possible.length));
-  console.log(id)
+
   return id;
 }

@@ -24,7 +24,10 @@ type Props = {
 }
 
 type State = {
-  minerStats: Array<any>,
+  minerStats: {
+    currentStatistics?: Object,
+    workers?: Object,
+  },
   payouts: Array<any>,
   loading: boolean,
   cryptoCode: string,
@@ -42,7 +45,7 @@ class PoolStatDetails extends React.Component<Props, State> {
   state = {
     loading: false,
     cryptoCode: "",
-    minerStats: [],
+    minerStats: {},
     payouts: [],
   }
 
@@ -63,6 +66,8 @@ class PoolStatDetails extends React.Component<Props, State> {
     try {
       const miner = await getMiner(wallet, apiEndpoint)
       const payouts = await getMinerPayouts(wallet, apiEndpoint)
+
+
       this.setState({
         minerStats: miner.data,
         payouts: payouts.data,
@@ -86,61 +91,63 @@ class PoolStatDetails extends React.Component<Props, State> {
 
   getLatestPayout = () => {
     const {payouts, cryptoCode} = this.state
-    const latestPayout = payouts && payouts[0].amount
 
+    if (payouts && payouts.length === 0) {
+      return `0 ${cryptoCode}`
+    }
+    
+    const latestPayout = payouts && payouts[0].amount
     return `${getBallance(latestPayout)} ${cryptoCode}`
   }
 
   render() {
-    console.log(this.state)
-
     const {loading} = this.state
 
     if (loading) {
       return <Spinner color="gray" />
     }
 
-    const {minerStats} = this.state
+    const {minerStats} = this.state    
     const {currentStatistics, workers} = minerStats
-
-    console.log();
-    
+   
 
     const workersStat =
-      workers &&
-      workers.map((worker, i) => {
-        const workerInfo = {
-          name: worker.worker,
-          currentHashrate: getHashrate(worker.currentHashrate),
-          reportedHashrate: getHashrate(worker.reportedHashrate),
-          lastSeen: new Date(worker.lastSeen * 1000).toDateString(),
-          key: i,
-        }
-
-        return (
-          <View style={styles.workerStats} key={i}>
-            <Text style={styles.workerName}>{workerInfo.name}</Text>
-            <View style={styles.sectionStats}>
-              <View style={styles.stats}>
-                <Text style={styles.statLabel}>Hashrate</Text>
-                <View style={styles.rowNoWrap}>
-                  <View style={styles.culumnNoWrap}>
-                    <Text style={styles.workerSubheading}>{workerInfo.currentHashrate}</Text>
-                  </View>
-                  <Text> | </Text>
-                  <View style={styles.culumnNoWrap}>
-                    <Text style={styles.workerSubheading}>{workerInfo.reportedHashrate}</Text>
+      workers && workers.length > 0 ? (
+        workers.map((worker, i) => {
+          const workerInfo = {
+            name: worker.worker,
+            currentHashrate: getHashrate(worker.currentHashrate),
+            reportedHashrate: getHashrate(worker.reportedHashrate),
+            lastSeen: new Date(worker.lastSeen * 1000).toDateString(),
+            key: i,
+          }       
+  
+          return (
+            <View style={styles.workerStats} key={i}>
+              <Text style={styles.workerName}>{workerInfo.name}</Text>
+              <View style={styles.sectionStats}>
+                <View style={styles.stats}>
+                  <Text style={styles.statLabel}>Hashrate</Text>
+                  <View style={styles.rowNoWrap}>
+                    <View style={styles.culumnNoWrap}>
+                      <Text style={styles.workerSubheading}>{workerInfo.currentHashrate}</Text>
+                    </View>
+                    <Text> | </Text>
+                    <View style={styles.culumnNoWrap}>
+                      <Text style={styles.workerSubheading}>{workerInfo.reportedHashrate}</Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-              <View style={styles.stats}>
-                <Text style={styles.statLabel}>Last seen</Text>
-                <Text style={styles.workerSubheading}>{workerInfo.lastSeen}</Text>
+                <View style={styles.stats}>
+                  <Text style={styles.statLabel}>Last seen</Text>
+                  <Text style={styles.workerSubheading}>{workerInfo.lastSeen}</Text>
+                </View>
               </View>
             </View>
-          </View>
-        )
-      })
+          )
+        })
+      ) : (<Text>No active workers found ☹️</Text>)
+      
 
     return (
       <Container>
@@ -166,11 +173,11 @@ class PoolStatDetails extends React.Component<Props, State> {
               <View style={styles.sectionStats}>
                 <View style={styles.stats}>
                   <Text style={styles.statLabel}>Valid</Text>
-                  <Text style={styles.sectionSubheading}>{currentStatistics.validShares}</Text>
+                  <Text style={styles.sectionSubheading}>{currentStatistics.validShares || 0}</Text>
                 </View>
                 <View style={styles.stats}>
                   <Text style={styles.statLabel}>Stale</Text>
-                  <Text style={styles.sectionSubheading}>{currentStatistics.staleShares}</Text>
+                  <Text style={styles.sectionSubheading}>{currentStatistics.staleShares || 0}</Text>
                 </View>
               </View>
             </View>
@@ -220,22 +227,26 @@ const styles = StyleSheet.create({
   },
   sectionHeading: {
     fontFamily: 'rubik-medium',
-    fontSize: Fonts.heading2,
+    fontSize: Fonts.heading3,
     marginBottom: 10,
+    color: Colors.textColor,
   },
   sectionSubheading: {
     fontFamily: 'rubik-medium',
-    fontSize: Fonts.heading3,
+    fontSize: 20,
     marginBottom: 3,
+    color: Colors.textColor,
   },
   workerName: {
     fontFamily: 'rubik-medium',
     fontSize: Fonts.heading3,
     marginBottom: 3,
+    color: Colors.textColor,
   },
   workerSubheading: {
     fontFamily: 'rubik-medium',
     fontSize: Fonts.heading5,
+    color: Colors.textColor,
   },
   section: {
     marginBottom: 20,
