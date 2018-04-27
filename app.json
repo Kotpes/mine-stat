@@ -1,21 +1,25 @@
 {
   "expo": {
-    "name": "mine-stat",
-    "description": "A very interesting project.",
-    "slug": "mine-stat",
+    "name": "C-Stat",
+    "description": "Mining stats from pools with open api",
+    "slug": "c-stat",
     "privacy": "public",
     "sdkVersion": "24.0.0",
     "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/app-logo.png",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.cstat.cstat"
+    },
+    "android": {
+      "package": "com.cstat.cstat"
     }
   }
 }
