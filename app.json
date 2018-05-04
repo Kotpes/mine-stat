@@ -16,10 +16,10 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.cstat.cstat"
+      "bundleIdentifier": "com.minestatapp.minestatapp"
     },
     "android": {
-      "package": "com.cstat.cstat"
+      "package": "com.minestatapp.minestatapp"
     }
   }
 }

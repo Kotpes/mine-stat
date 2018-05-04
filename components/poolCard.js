@@ -25,6 +25,7 @@ type Props = {
 }
 
 type State = {
+  noData: boolean,
   data: {
     wallet: string,
     apiEndpoint: string,
@@ -44,6 +45,7 @@ class poolCard extends React.Component<Props, State> {
 
   state: State = {
     data: this.props.data,
+    noData: false,
   }
 
   componentDidMount() {
@@ -56,6 +58,7 @@ class poolCard extends React.Component<Props, State> {
       const miner = await getMiner(data.wallet, data.apiEndpoint)
       this.setState({minerCurrentStats: miner.data.currentStatistics})
     } catch (error) {
+      this.setState({noData: true})
       console.log(error) 
     }
   }
@@ -73,36 +76,44 @@ class poolCard extends React.Component<Props, State> {
     )    
   }
 
+  _poolNotFound(data: Object) {
+    const {removePool} = this.props
+
+    Alert.alert(
+      'No data found',
+      'No data found for this wallet address. Would you like to delete this pool?',
+      [
+        {text: 'Cancel', onPress: () => null},
+        {text: 'OK', onPress: () => removePool(data)},
+      ]
+    ) 
+  }
+
   render() {
-    const {data, minerCurrentStats} = this.state
+    const {data, minerCurrentStats, noData} = this.state
     const {onPress, shadowColor} = this.props
-   
-    
-    if (!minerCurrentStats) {
-      return null
-    }
 
-    const activeWorkers = minerCurrentStats.activeWorkers >= 0 ? minerCurrentStats.activeWorkers : 0
+    const activeWorkers = minerCurrentStats && minerCurrentStats.activeWorkers >= 0 ? minerCurrentStats.activeWorkers : 0
     const updaidBallance = minerCurrentStats ? minerCurrentStats.unpaid : 0
-
-    console.log(minerCurrentStats);
+    const wallet = data.wallet
+    const currentHashrate = noData ? 0 : minerCurrentStats && minerCurrentStats.currentHashrate
     
     return (
-      <TouchableOpacity style={styles.container} onPress={onPress}>
+      <TouchableOpacity style={styles.container} onPress={noData ? () => {this._poolNotFound(data)} : onPress}>
         <View style={[styles.card, {shadowColor}]}>
           <CardItem onPress={() => Alert.alert('Touched')}>
             <Body>
               <Text style={styles.label}>{data.customLabel}</Text>
               <Text style={styles.pool}>{data.poolName}</Text>
               <Text numberOfLines={1} style={styles.address}>
-                {data.wallet}
+                {wallet}
               </Text>
             </Body>
           </CardItem>
           <CardItem style={styles.poolStat}>
             <View style={styles.stats}>
               <Text style={styles.stat}>Hashrate</Text>
-              <Text style={styles.value}>{getHashrate(minerCurrentStats.currentHashrate)}</Text>
+              <Text style={styles.value}>{getHashrate(currentHashrate)}</Text>
             </View>
             <View style={styles.stats}>
               <Text style={styles.stat}>Workes</Text>
