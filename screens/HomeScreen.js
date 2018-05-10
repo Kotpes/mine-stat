@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Platform, StyleSheet, View, ScrollView, RefreshControl } from "react-native";
+import { Constants } from "expo";
 import { observer } from "mobx-react/native";
 import { Ionicons } from "@expo/vector-icons";
 import { Button, Text } from "native-base";
@@ -19,7 +20,7 @@ const colors = ["#77c7c8", "#fa8072", "#C5C1DE", "#ABBFA3", "#DCC468", "#C34441"
 @observer
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
-    title: "Pools"
+    title: "Pools",
   };
 
   static defaultProps = {

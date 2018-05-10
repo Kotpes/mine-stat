@@ -99,38 +99,39 @@ class poolCard extends React.Component<Props, State> {
     const currentHashrate = noData ? 0 : minerCurrentStats && minerCurrentStats.currentHashrate
     
     return (
-      <TouchableOpacity style={styles.container} onPress={noData ? () => {this._poolNotFound(data)} : onPress}>
-        <View style={[styles.card, {shadowColor}]}>
-          <CardItem onPress={() => Alert.alert('Touched')}>
-            <Body>
-              <Text style={styles.label}>{data.customLabel}</Text>
-              <Text style={styles.pool}>{data.poolName}</Text>
-              <Text numberOfLines={1} style={styles.address}>
-                {wallet}
-              </Text>
-            </Body>
-          </CardItem>
-          <CardItem style={styles.poolStat}>
-            <View style={styles.stats}>
-              <Text style={styles.stat}>Hashrate</Text>
-              <Text style={styles.value}>{getHashrate(currentHashrate)}</Text>
-            </View>
-            <View style={styles.stats}>
-              <Text style={styles.stat}>Workes</Text>
-              <Text style={styles.value}>{activeWorkers}</Text>
-            </View>
-            <View style={styles.stats}>
-              <Text style={styles.stat}>Unpaid ballance</Text>
-              <Text style={styles.value}>{getBallance(updaidBallance, data.cryptoCode)} {data.cryptoCode}</Text>
-            </View>
-          </CardItem>
-          <View style={styles.cardActions}>
-            <Button transparent onPress={() => this.deleteConfirmation(data)}>
-              <Ionicons name="ios-trash-outline" color={"black"} size={24}/>
-            </Button>  
+      <View>
+      <TouchableOpacity style={[styles.container, {shadowColor}, styles.card]} onPress={noData ? () => {this._poolNotFound(data)} : onPress}>
+        <CardItem>
+          <Body>
+            <Text style={styles.label}>{data.customLabel}</Text>
+            <Text style={styles.pool}>{data.poolName}</Text>
+            <Text numberOfLines={1} style={styles.address}>
+              {wallet}
+            </Text>
+          </Body>
+        </CardItem>
+        <CardItem style={styles.poolStat}>
+          <View style={styles.stats}>
+            <Text style={styles.stat}>Hashrate</Text>
+            <Text style={styles.value}>{getHashrate(currentHashrate)}</Text>
           </View>
-        </View>
+          <View style={styles.stats}>
+            <Text style={styles.stat}>Workes</Text>
+            <Text style={styles.value}>{activeWorkers}</Text>
+          </View>
+          <View style={styles.stats}>
+            <Text style={styles.stat}>Unpaid ballance</Text>
+            <Text style={styles.value}>{getBallance(updaidBallance, data.cryptoCode)} {data.cryptoCode}</Text>
+          </View>  
+        </CardItem>    
       </TouchableOpacity>
+      
+      <Button transparent onPress={() => this.deleteConfirmation(data)} style={styles.actionButton}>
+        <Ionicons name="ios-trash-outline" color={"black"} size={24}/>
+      </Button>
+    </View>
+      
+      
     )
   }
 }
@@ -139,7 +140,7 @@ export default poolCard;
 
 const styles = StyleSheet.create({
   container: {
-    height: 190,
+    // height: 290,
     marginBottom: 20,
   },
   card: {
@@ -158,6 +159,7 @@ const styles = StyleSheet.create({
     fontFamily: "rubik-medium",
     fontSize: Fonts.heading2,
     color: Colors.textColor,
+    width: 200,
   },
   pool: {
     fontFamily: "rubik-regular",
@@ -199,5 +201,10 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "rubik-medium",
     color: Colors.textColor,
+  },
+  actionButton: {
+    position: "absolute",
+    right: 10,
+    // top: 30,
   }
 });

@@ -2,7 +2,7 @@
   "items": [
     {
       "key": "select-pool",
-      "label": "Select pool"
+      "label": "Pools"
     },
     {
       "key": "eth-ethermine",

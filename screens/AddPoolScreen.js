@@ -187,6 +187,27 @@ export default class LinksScreen extends React.Component {
                   <Text style={styles.textStyle}>{selectedPoolLabel}</Text>
                   <Icon name={visiblePicker ? "arrow-up" : "arrow-down"} />
                 </Button>
+                {visiblePicker && Platform.OS === 'android' && (
+                  <SafeAreaView>
+                    <Picker
+                      mode="dialog"
+                      selectedValue={selectedPool}
+                      onValueChange={itemValue =>
+                        this._onPickerValueChange(itemValue)
+                      }
+                    >
+                      {poolsData.map(pool => {
+                        return (
+                          <Picker.Item
+                            key={pool.key}
+                            label={pool.label}
+                            value={pool.key}
+                          />
+                        );
+                      })}
+                    </Picker>
+                  </SafeAreaView>
+                )}
 
                 <Item style={styles.input}>
                   <Input
@@ -217,10 +238,10 @@ export default class LinksScreen extends React.Component {
                 </Button>
               </View>
             </Form>
-            {visiblePicker && (
+            {visiblePicker && Platform.OS === 'ios' && (
               <SafeAreaView>
                 <Picker
-                  mode="dropdown"
+                  mode="dialog"
                   selectedValue={selectedPool}
                   onValueChange={itemValue =>
                     this._onPickerValueChange(itemValue)

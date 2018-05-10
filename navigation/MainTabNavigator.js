@@ -34,7 +34,7 @@ export default TabNavigator(
             iconName =
               Platform.OS === 'ios'
                 ? `ios-information-circle${focused ? '' : '-outline'}`
-                : 'md-albums'
+                : 'md-information-circle'
         }
         return (
           <Ionicons
