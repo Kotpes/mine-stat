@@ -6,7 +6,6 @@ import {Container, Spinner, Badge, Content, Button} from 'native-base'
 import {observer} from 'mobx-react/native'
 import {getMiner, getMinerPayouts} from '../api/apiClient'
 import {getHashrate, getBallance, getConvertedHashrate} from '../utils/dataUtils'
-import {VictoryBar, VictoryLine, VictoryChart, VictoryTheme} from 'victory-native'
 import observablePoolStore from '../store/poolStore'
 import Colors from '../constants/Colors'
 import Fonts from '../constants/Fonts'
@@ -33,13 +32,6 @@ type State = {
   loading: boolean,
   cryptoCode: string,
 }
-
-const testData = [
-  { quarter: 1, earnings: 13000 },
-  { quarter: 2, earnings: 16500 },
-  { quarter: 3, earnings: 14250 },
-  { quarter: 4, earnings: 19000 }
-];
 
 class PoolStatDetails extends React.Component<Props, State> {
   static navigationOptions = ({navigation}: Object) => {
@@ -116,18 +108,7 @@ class PoolStatDetails extends React.Component<Props, State> {
     }
 
     const {minerStats} = this.state    
-    const {currentStatistics, workers, statistics} = minerStats
-
-    let data = []
-    const latestStat = statistics && statistics.slice(0, 100).map((stat) => {
-      const obj = {
-        time: stat.time,
-        reportedHashrate: stat.reportedHashrate,
-      }
-      data.push(obj)
-    })
-
-    console.log(data);   
+    const {currentStatistics, workers} = minerStats
    
 
     const workersStat =
@@ -167,7 +148,6 @@ class PoolStatDetails extends React.Component<Props, State> {
         })
       ) : (<Text>No active workers found ☹️</Text>)
       
-
     return (
       <Container>
         {currentStatistics && (
@@ -184,14 +164,7 @@ class PoolStatDetails extends React.Component<Props, State> {
                     <Text style={styles.statLabel}>Reported</Text>
                     <Text style={styles.sectionSubheading}>{getHashrate(currentStatistics.reportedHashrate)}</Text>
                   </View>
-                </View>
-                {data && 
-                 <View style={styles.chart}>
-                  <VictoryChart theme={VictoryTheme.material}>
-                    <VictoryLine data={data} y={(d) => `${getConvertedHashrate(d.reportedHashrate)}`} animate={{duration: 500}} />
-                  </VictoryChart>
-                </View>
-                }               
+                </View>            
               </View>
             </View>
             <View style={styles.section}>
