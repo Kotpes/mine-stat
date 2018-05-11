@@ -23,7 +23,6 @@ import {
 } from "native-base";
 import { Row, Grid } from "react-native-easy-grid";
 import { Ionicons } from "@expo/vector-icons";
-import store from "react-native-simple-store";
 import Colors from "../constants/Colors";
 import Fonts from "../constants/Fonts";
 import Pools from "../static/pools.json";

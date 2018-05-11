@@ -8,7 +8,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { Button, Text } from "native-base";
 import { Container, Content, Picker, Form, Item, Spinner } from "native-base";
 import { Row, Grid } from "react-native-easy-grid";
-import store from "react-native-simple-store";
 import observablePoolStore from "../store/poolStore";
 import PoolCard from "../components/poolCard";
 
