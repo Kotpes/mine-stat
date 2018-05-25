@@ -1,24 +1,32 @@
 {
   "items": [
     {
-      "key": 0,
-      "label": "Select pool"
+      "key": "select-pool",
+      "label": "Pools"
     },
     {
-      "key": 1,
-      "label": "(ETH) Ethermine.org"
+      "key": "eth-ethermine",
+      "label": "(ETH) Ethermine.org",
+      "apiEndpoint": "https://api.ethermine.org",
+      "cryptoCode": "ETH"
     },
     {
-      "key": 2,
-      "label": "(ETH) Ethpool.org"
+      "key": "eth-ethpool",
+      "label": "(ETH) Ethpool.org",
+      "apiEndpoint": "https://api.ethpool.org",
+      "cryptoCode": "ETH"
     },
     {
-      "key": 3,
-      "label": "(ETC) Ethermine.org"
+      "key": "etc-ethermine",
+      "label": "(ETC) Ethermine.org",
+      "apiEndpoint": "https://api-etc.ethermine.org",
+      "cryptoCode": "ETC"
     },
     {
-      "key": 4,
-      "label": "(ZEC) Flypool Zcash"
+      "key": "zec-flypool",
+      "label": "(ZEC) Flypool Zcash",
+      "apiEndpoint": "https://api-zcash.flypool.org",
+      "cryptoCode": "ZEC"
     }
   ]
 }

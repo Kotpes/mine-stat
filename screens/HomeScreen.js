@@ -1,129 +1,155 @@
-import React from 'react'
-import {Platform, StyleSheet, View} from 'react-native'
-import {Ionicons} from '@expo/vector-icons'
-import {Button, Text} from 'native-base'
-import {Container, Content, Picker, Form, Item} from 'native-base'
-import {Row, Grid} from 'react-native-easy-grid'
-import store from 'react-native-simple-store'
+//@flow
 
-import Colors from '../constants/Colors'
-import Fonts from '../constants/Fonts'
+import React from "react";
+import { Platform, StyleSheet, View, ScrollView, RefreshControl } from "react-native";
+import { Constants } from "expo";
+import { observer } from "mobx-react/native";
+import { Ionicons } from "@expo/vector-icons";
+import { Button, Text } from "native-base";
+import { Container, Content, Picker, Form, Item, Spinner } from "native-base";
+import { Row, Grid } from "react-native-easy-grid";
+import observablePoolStore from "../store/poolStore";
+import PoolCard from "../components/poolCard";
 
+import Colors from "../constants/Colors";
+import Fonts from "../constants/Fonts";
+
+const colors = ["#77c7c8", "#fa8072", "#C5C1DE", "#ABBFA3", "#DCC468", "#C34441", "#74B9E8"]
+
+@observer
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
-    title: 'Pools',
+    title: "Pools",
+  };
+
+  static defaultProps = {
+    store: observablePoolStore
+  };
+
+  state = {
+    loadingPools: true,
+    refreshing: false,
+    modalVisible: false,
+    availablePools: []
+  };
+
+  componentDidMount() {
+    this._getPools();
   }
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      selected2: undefined,
-      modalVisible: false,
-      availablePools: undefined,
-    }
-  }
-
-  componentWillMount() {
-    this._getPools()
-  }
-
-  onValueChange2(value) {
-    this.setState({
-      selected2: value,
-    })
-  }
-
-  async _getPools() {
+  _getPools() {
+    const { store } = this.props;
     try {
-      const pools = await store.get('pools')
-      this.setState({availablePools: pools})
+      const pools = store.pools;
+      this.setState({ 
+        availablePools: pools,
+        loadingPools: false,
+      });
     } catch (e) {
-      console.log(e)
+      this.setState({ loadingPools: false });
+      console.log(e);
     }
+  }
+
+  _removePool(pool) {
+    const { store } = this.props;
+    store.removePool(pool);
+    this._getPools();
+  }
+
+  _onRefresh() {
+    this._getPools();
   }
 
   openModal() {
-    this.setState({modalVisible: true})
+    this.setState({ modalVisible: true });
   }
 
   closeModal() {
-    this.setState({modalVisible: false})
+    this.setState({ modalVisible: false });
   }
 
   render() {
-    const {availablePools} = this.state
+    const { availablePools, refreshing, loadingPools } = this.state;
 
-    return (
-      <Container>
-        <Content contentContainerStyle={styles.container}>
-          <Grid style={styles.grid}>
-            <Row style={styles.row}>
-              <Text>{`Found pool: ${availablePools &&
-                availablePools[0].wallet}`}</Text>
-              <Text style={styles.helpText}>
-                No pools found, please add one first
-              </Text>
-              <Button
-                block
-                iconLeft
-                onPress={() => this._goToScreen('AddPool')}
-              >
-                <Ionicons name="md-add" color={'white'} size={20} />
-                <Text style={styles.buttonText}>Add pool</Text>
-              </Button>
-            </Row>
-          </Grid>
-        </Content>
+    return !loadingPools ? (
+      <Container style={styles.container}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }
+          contentContainerStyle={
+            availablePools.length === 0
+              ? styles.containerNoPools
+              : styles.containerPools
+          }
+        >
+          {availablePools.length > 0 ? (
+            availablePools.map((pool, i) => (
+              <PoolCard  key={pool.index} data={pool} shadowColor={colors[Math.floor(Math.random()*colors.length)]} removePool={() => this._removePool(pool)} onPress={() => this.props.navigation.navigate("poolStatDetails", pool: pool)} />
+            ))
+          ) : (
+            <Text style={styles.helpText}>
+              No pools found, please add one first
+            </Text>
+          )}
+
+          <Button
+            block
+            iconLeft
+            onPress={() => this._goToScreen("AddPool")}
+            style={{ marginTop: availablePools.length > 0 ? 0 : 20, marginBottom: 20 }}
+          >
+            <Ionicons name="md-add" color={"white"} size={20} />
+            <Text style={styles.buttonText}>Add pool</Text>
+          </Button>
+        </ScrollView>
       </Container>
-    )
+    ):(<Spinner color="gray" />)
   }
-  _goToScreen = screen => {
-    this.props.navigation.navigate(screen)
-  }
+  _goToScreen = (screen) => {    
+    this.props.navigation.navigate(screen);  
+  };
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //paddingTop: 50,
-    backgroundColor: '#fff',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
+    backgroundColor: "#fff"
+  },
+  containerNoPools: {
     paddingLeft: 20,
     paddingRight: 20,
+    flex: 1,
+    //paddingTop: 50,
+    flexDirection: "column",
+    justifyContent: "center",
+    borderRadius: 10,
+  },
+  containerPools: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 20,
   },
   helpText: {
     color: Colors.noticeText,
-    marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center"
   },
   modalContainer: {
     flex: 1,
     paddingTop: 50,
-    backgroundColor: '#eee',
+    backgroundColor: "#eee",
     paddingLeft: 20,
-    paddingRight: 20,
+    paddingRight: 20
   },
   modalTitle: {
     fontSize: Fonts.heading2,
-    fontFamily: 'rubik-medium',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  grid: {
-    justifyContent: 'center',
-    flexDirection: 'column',
-  },
-  buttonText: {
-    fontFamily: 'rubik-regular',
-    fontSize: 20,
-  },
-  row: {
-    alignItems: 'center',
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-  modal: {
-    flex: 1,
-  },
-})
+    fontFamily: "rubik-medium",
+    textAlign: "center",
+    marginBottom: 20
+  }
+});

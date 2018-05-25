@@ -7,12 +7,15 @@ import Colors from '../constants/Colors'
 
 import HomeScreen from '../screens/HomeScreen'
 import AddPoolScreen from '../screens/AddPoolScreen'
-import SettingsScreen from '../screens/SettingsScreen'
+import AboutScreen from '../screens/AboutScreen'
 
 export default TabNavigator(
   {
     Home: {
       screen: HomeScreen,
+    },
+    About: {
+      screen: AboutScreen,
     },
   },
   {
@@ -27,17 +30,11 @@ export default TabNavigator(
                 ? `ios-albums${focused ? '' : '-outline'}`
                 : 'md-albums'
             break
-          case 'FAQ':
+          case 'About':
             iconName =
               Platform.OS === 'ios'
-                ? `ios-link${focused ? '' : '-outline'}`
-                : 'md-link'
-            break
-          case 'Settings':
-            iconName =
-              Platform.OS === 'ios'
-                ? `ios-options${focused ? '' : '-outline'}`
-                : 'md-options'
+                ? `ios-information-circle${focused ? '' : '-outline'}`
+                : 'md-information-circle'
         }
         return (
           <Ionicons

@@ -1,3 +1,5 @@
+//@flow
+
 const tintColor = '#2A7DF6'
 
 export default {
@@ -12,4 +14,6 @@ export default {
   noticeBackground: tintColor,
   noticeText: '#919191',
   lightGrey: '#ddd',
+  borderLightGray: "#ececec",
+  textColor: "#333",
 }

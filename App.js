@@ -25,7 +25,7 @@ export default class App extends React.Component {
           {Platform.OS === 'android' && (
             <View style={styles.statusBarUnderlay} />
           )}
-          <RootNavigation />
+          <RootNavigation />         
         </View>
       )
     }
@@ -44,6 +44,8 @@ export default class App extends React.Component {
         'rubik-light': require('./assets/fonts/Rubik-Light.ttf'),
         'rubik-black': require('./assets/fonts/Rubik-Black.ttf'),
         'rubik-medium': require('./assets/fonts/Rubik-Medium.ttf'),
+        'Roboto': require('native-base/Fonts/Roboto.ttf'),
+        'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
       }),
     ])
   }
@@ -65,7 +67,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   statusBarUnderlay: {
-    height: Constants.statusBarHeight,
+    // height: Constants.statusBarHeight,
     backgroundColor: 'rgba(0,0,0,0.2)',
   },
 })

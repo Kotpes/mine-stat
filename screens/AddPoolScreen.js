@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import {
   Keyboard,
   ScrollView,
@@ -8,58 +8,73 @@ import {
   View,
   SafeAreaView,
   Alert,
-  Modal,
-} from 'react-native'
-import {Button, Text} from 'native-base'
-import {BarCodeScanner, Permissions} from 'expo'
-import {Container, Content, Form, Item, Input, Label, Icon} from 'native-base'
-import {Row, Grid} from 'react-native-easy-grid'
-import {Ionicons} from '@expo/vector-icons'
-import store from 'react-native-simple-store'
-import Colors from '../constants/Colors'
-import Fonts from '../constants/Fonts'
-import Pools from '../static/pools.json'
+  Modal
+} from "react-native";
+import { Button, Text } from "native-base";
+import { BarCodeScanner, Permissions } from "expo";
+import {
+  Container,
+  Content,
+  Form,
+  Item,
+  Input,
+  Label,
+  Icon
+} from "native-base";
+import { Row, Grid } from "react-native-easy-grid";
+import { Ionicons } from "@expo/vector-icons";
+import Colors from "../constants/Colors";
+import Fonts from "../constants/Fonts";
+import Pools from "../static/pools.json";
+import observablePoolStore from "../store/poolStore";
+import { observer } from "mobx-react/native";
 
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
-    title: 'Add pool',
-  }
+    title: "Add pool"
+  };
+  static defaultProps = {
+    store: observablePoolStore
+  };
+
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       selectedPool: undefined,
-      selectedPoolLabel: 'Select pool',
+      selectedPoolLabel: "Select pool",
       visiblePicker: false,
       platform: Platform.OS,
       hasCameraPermission: null,
       modalVisible: false,
-      walletAddress: 'Wallet address',
+      walletAddress: "Wallet address",
       poolsData: Pools.items || [],
-    }
-  }
-
-  async componentWillMount() {
-    const {status} = await Permissions.askAsync(Permissions.CAMERA)
-    this.setState({hasCameraPermission: status === 'granted'})
+      customLabel: "",
+      cryptoCode: "",
+    };
   }
 
   componentDidMount() {
-    this._getListOfPools()
+    const { store: { pools } } = this.props;
+  }
+
+  async componentWillMount() {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    this.setState({ hasCameraPermission: status === "granted" });
   }
 
   openModal() {
-    this.setState({modalVisible: true})
+    this.setState({ modalVisible: true });
   }
 
   closeModal() {
-    this.setState({modalVisible: false})
+    this.setState({ modalVisible: false });
   }
 
   _toggleOpacity() {
-    const {visiblePicker} = this.state
-    this.setState({visiblePicker: visiblePicker ? false : true})
+    const { visiblePicker } = this.state;
+    this.setState({ visiblePicker: !visiblePicker });
     if (!visiblePicker) {
-      Keyboard.dismiss()
+      Keyboard.dismiss();
     }
   }
 
@@ -69,71 +84,79 @@ export default class LinksScreen extends React.Component {
       walletAddress,
       hasCameraPermission,
       selectedPool,
-    } = this.state
-    console.log(walletAddress)
+      customLabel
+    } = this.state;
+
     if (!selectedPool || selectedPool === 0) {
-      Alert.alert('Pool is not selected', `Select pool first`, [{text: 'OK'}])
-    } else if (walletAddress === 'Wallet address') {
+      Alert.alert("Pool is not selected", `Select pool first`, [
+        { text: "OK" }
+      ]);
+    } else if (walletAddress === "Wallet address") {
       Alert.alert(
-        'Wallet information is missing',
+        "Wallet information is missing",
         `Add wallet address before continue`,
-        [{text: 'OK'}],
-      )
+        [{ text: "OK" }]
+      );
+    } else if (customLabel === "") {
+      Alert.alert(
+        "Custom label is missing",
+        `Add custom label for this pool before continue`,
+        [{ text: "OK" }]
+      );
     } else {
       Alert.alert(
-        'Pool info',
-        `Selected pool: ${selectedPoolLabel} Wallet address: ${walletAddress}`,
+        `${customLabel} | ${selectedPoolLabel}`,
+        `Wallet address: ${walletAddress}`,
         [
           {
-            text: 'Cancel',
-            style: 'cancel',
+            text: "Cancel",
+            style: "cancel"
           },
-          {text: 'OK', onPress: () => this._handlePoolSubmit()},
+          { text: "OK", onPress: () => this._handlePoolSubmit() }
         ],
-        {cancelable: false},
-      )
+        { cancelable: false }
+      );
     }
   }
 
-  async _handlePoolSubmit() {
-    const {selectedPool, walletAddress} = this.state
+  _handlePoolSubmit() {
+    const { walletAddress, customLabel, selectedPoolLabel, poolApiEndpoint, cryptoCode } = this.state;
+    const { store } = this.props;
 
-    const existingPool = await store.get('pools')
-
-    const PoolInfo = {
-      key: selectedPool,
+    const pool = {
+      name: selectedPoolLabel,
+      customLabel,
       wallet: walletAddress,
-    }
-    try {
-      await store.push('pools', PoolInfo)
-      this.props.navigation.navigate('Main')
-    } catch (e) {
-      console.log(e)
-    }
-  }
+      poolApiEndpoint,
+      cryptoCode,
+    };
 
-  async _getListOfPools() {
     try {
-      const pools = await store.get('pools')
-      console.log(pools)
+      store.addPool(pool);
+      this.props.navigation.goBack();
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   }
 
   _handleBarCodeRead = data => {
-    this.setState({walletAddress: data && data.data})
-    this.closeModal()
-  }
+    this.setState({ walletAddress: data && data.data });
+    this.closeModal();
+  };
 
   _onPickerValueChange(itemValue) {
-    const {poolsData} = this.state
-    console.log(poolsData[itemValue].label)
+    const { poolsData } = this.state;
+
+    const selectedPoolLabel = poolsData.find(p => p.key === itemValue).label;
+    const poolApiEndpoint = poolsData.find(p => p.key === itemValue).apiEndpoint;
+    const cryptoCode = poolsData.find(p => p.key === itemValue).cryptoCode;    
+
     this.setState({
       selectedPool: itemValue,
-      selectedPoolLabel: poolsData[itemValue].label,
-      visibleWalletField: true,
-    })
+      selectedPoolLabel,
+      poolApiEndpoint,
+      cryptoCode,
+    });
   }
 
   render() {
@@ -144,8 +167,8 @@ export default class LinksScreen extends React.Component {
       walletAddress,
       selectedPoolLabel,
       hasCameraPermission,
-      poolsData,
-    } = this.state
+      poolsData
+    } = this.state;
 
     return (
       <Container>
@@ -161,16 +184,37 @@ export default class LinksScreen extends React.Component {
                   style={styles.dropDown}
                 >
                   <Text style={styles.textStyle}>{selectedPoolLabel}</Text>
-                  <Icon name={visiblePicker ? 'arrow-up' : 'arrow-down'} />
+                  <Icon name={visiblePicker ? "arrow-up" : "arrow-down"} />
                 </Button>
+                {visiblePicker && Platform.OS === 'android' && (
+                  <SafeAreaView>
+                    <Picker
+                      mode="dialog"
+                      selectedValue={selectedPool}
+                      onValueChange={itemValue =>
+                        this._onPickerValueChange(itemValue)
+                      }
+                    >
+                      {poolsData.map(pool => {
+                        return (
+                          <Picker.Item
+                            key={pool.key}
+                            label={pool.label}
+                            value={pool.key}
+                          />
+                        );
+                      })}
+                    </Picker>
+                  </SafeAreaView>
+                )}
 
                 <Item style={styles.input}>
                   <Input
                     style={styles.walletInput}
                     placeholder={walletAddress}
-                    onFocus={() => this._toggleOpacity()}
+                    onFocus={() => visiblePicker && this._toggleOpacity()}
                     onChangeText={walletAddress =>
-                      this.setState({walletAddress})
+                      this.setState({ walletAddress })
                     }
                   />
                   <Icon
@@ -179,14 +223,24 @@ export default class LinksScreen extends React.Component {
                     onPress={() => this.openModal()}
                   />
                 </Item>
+                <Item style={styles.input}>
+                  <Input
+                    style={styles.walletInput}
+                    placeholder="Custom label"
+                    onChangeText={label =>
+                      this.setState({ customLabel: label })
+                    }
+                  />
+                </Item>
                 <Button block onPress={() => this._submitAlert()}>
                   <Text style={styles.buttonText}>Add pool</Text>
                 </Button>
               </View>
             </Form>
-            {visiblePicker && (
+            {visiblePicker && Platform.OS === 'ios' && (
               <SafeAreaView>
                 <Picker
+                  mode="dialog"
                   selectedValue={selectedPool}
                   onValueChange={itemValue =>
                     this._onPickerValueChange(itemValue)
@@ -199,7 +253,7 @@ export default class LinksScreen extends React.Component {
                         label={pool.label}
                         value={pool.key}
                       />
-                    )
+                    );
                   })}
                 </Picker>
               </SafeAreaView>
@@ -207,7 +261,7 @@ export default class LinksScreen extends React.Component {
           </View>
           <Modal
             visible={this.state.modalVisible}
-            animationType={'slide'}
+            animationType={"slide"}
             onRequestClose={() => this.closeModal()}
           >
             <View style={styles.modalContainer}>
@@ -226,7 +280,7 @@ export default class LinksScreen extends React.Component {
           </Modal>
         </Content>
       </Container>
-    )
+    );
   }
 }
 
@@ -236,76 +290,76 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingLeft: 20,
     paddingRight: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff"
   },
   screenTitle: {
     fontSize: Fonts.heading1,
-    fontFamily: 'rubik-medium',
-    textAlign: 'center',
-    marginBottom: 30,
+    fontFamily: "rubik-medium",
+    textAlign: "center",
+    marginBottom: 30
   },
   formContent: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start"
   },
   helpText: {
     flex: 1,
-    fontSize: Fonts.heading2,
+    fontSize: Fonts.heading2
   },
   closeIcon: {
     color: Colors.tintColor,
     fontSize: 40,
-    padding: 5,
+    padding: 5
   },
   closeButton: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center"
   },
   input: {
     marginBottom: 20,
     paddingLeft: 0,
-    marginLeft: 0,
+    marginLeft: 0
   },
   picker: {
-    top: -50,
+    top: -50
   },
   label: {
-    color: Colors.lightGrey,
+    color: Colors.lightGrey
   },
   form: {
-    marginLeft: 0,
+    marginLeft: 0
   },
   textStyle: {
-    fontSize: 20,
+    fontSize: 20
   },
   dropDown: {
-    left: -10,
+    left: -10
   },
   cameraIcon: {
     color: Colors.tintColor,
-    fontSize: 30,
+    fontSize: 30
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'space-between',
-    backgroundColor: 'grey',
+    justifyContent: "space-between",
+    backgroundColor: "grey"
   },
   barCodeScanner: {
-    flex: 1,
+    flex: 1
   },
   modalCloseIcon: {
-    position: 'absolute',
+    position: "absolute",
     fontSize: 50,
     padding: 5,
     bottom: 30,
     right: 30,
-    color: 'white',
-    backgroundColor: 'transparent',
+    color: "white",
+    backgroundColor: "transparent"
   },
   walletInput: {
     marginLeft: 0,
-    fontSize: 14,
-  },
-})
+    fontSize: 14
+  }
+});
